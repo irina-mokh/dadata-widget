@@ -6,8 +6,22 @@ body {
 input {
   font-size: 16px;
   padding: 4px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
+.hint-widget {
+  max-width: 1200px;
+  min-width: 300px;
+  padding: 0 15px;
+  margin: 0 auto;
+  font-family: BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.search {
+  position: relative;
+  width: 100%;
+}
 .result {
   width: 50%;
   min-width: 300px;
@@ -27,9 +41,38 @@ input {
 }
 
 .suggestions {
-  position: relative;
+  position: absolute;
+  z-index: 2;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: white;
+  border: 1px solid gray;
+  display: none;
+}
+
+.suggestions__hint {
+  margin: 0;
+  color: gray;
 }
 
 .suggestions__item {
+  list-style: none;
+  padding: 3px 5px;
+  cursor: default;
+}
 
+.suggestions__item:hover {
+  background-color: #eeeeee;
+}
+
+.info, .title {
+  margin: 0;
+  text-overflow: elipsis;
+}
+
+.info {
+  color: gray;
 }
