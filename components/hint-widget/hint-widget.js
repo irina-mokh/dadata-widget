@@ -12,11 +12,11 @@ let options = {
 }
 
 const TYPES = {
-  'INDIVIDUAL': 'Индивидуальный предприниматель',
-  'LEGAL': 'Организация'
+  "INDIVIDUAL": "Индивидуальный предприниматель",
+  "LEGAL": "Организация",
 }
 
-const template = document.createElement('template');
+const template = document.createElement("template");
 template.innerHTML = `
   <style>
     @import "/components/hint-widget/hint-widget.css";
@@ -53,19 +53,18 @@ template.innerHTML = `
 class HintWidget extends HTMLElement {
   constructor() {
     super();
-    // this.setAttribute('suggestions', null);
-    this.attachShadow({mode: 'open'});
+    this.attachShadow({mode: "open"});
     this.shadowRoot.appendChild(template.content.cloneNode(true))
     this._suggestions = [];
     this.isOverList = false;
 
-    this.searchEl = this.shadowRoot.querySelector('#party');
-    this.suggestionsEl = this.shadowRoot.querySelector('.suggestions');
-    this.typeEl = this.shadowRoot.querySelector('#type');
-    this.nameShortEl = this.shadowRoot.querySelector('#name_short');
-    this.nameFullEl = this.shadowRoot.querySelector('#name_full');
-    this.innEl = this.shadowRoot.querySelector('#inn_kpp');
-    this.addressEl = this.shadowRoot.querySelector('#address');
+    this.searchEl = this.shadowRoot.querySelector("#party");
+    this.suggestionsEl = this.shadowRoot.querySelector(".suggestions");
+    this.typeEl = this.shadowRoot.querySelector("#type");
+    this.nameShortEl = this.shadowRoot.querySelector("#name_short");
+    this.nameFullEl = this.shadowRoot.querySelector("#name_full");
+    this.innEl = this.shadowRoot.querySelector("#inn_kpp");
+    this.addressEl = this.shadowRoot.querySelector("#address");
     }
 
   set suggestions(value) {
@@ -76,7 +75,7 @@ class HintWidget extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['open', 'query'];
+    return ["open", "query"];
   }
 
   fetchSuggestions = async (query) => {
@@ -85,7 +84,6 @@ class HintWidget extends HTMLElement {
         body: JSON.stringify({
           query: query,
           count: 5,
-          // type: "PARTY",
         }),
         }
       )
@@ -93,8 +91,8 @@ class HintWidget extends HTMLElement {
       .then(result => {
         const data = JSON.parse(result).suggestions;
         this.suggestions = [...data];
-        this.setAttribute('open', true);
-        this.setAttribute('query', query);
+        this.setAttribute("open", true);
+        this.setAttribute("query", query);
 
       })
       .catch(error => console.log("error", error));
@@ -105,60 +103,60 @@ class HintWidget extends HTMLElement {
     if (query) { 
       this.fetchSuggestions(query);
     } else {
-      this.setAttribute('open', false);
-      this.setAttribute('query', '');
+      this.setAttribute("open", false);
+      this.setAttribute("query", "");
     }
   }
 
   connectedCallback () {
     setTimeout(() => {
-      this.searchEl.addEventListener('input', this.handleInput.bind(this));
-      this.searchEl.addEventListener('blur', () => {
-        if (!this.isOverList) {this.setAttribute('open', false)}
+      this.searchEl.addEventListener("input", this.handleInput.bind(this));
+      this.searchEl.addEventListener("blur", () => {
+        if (!this.isOverList) this.setAttribute("open", false);
       });
-      this.searchEl.addEventListener('focus', () => {
-        if (this.getAttribute('query')) this.setAttribute('open', true)
+      this.searchEl.addEventListener("focus", () => {
+        if (this.getAttribute("query")) this.setAttribute("open", true);
       });
     });
   }
 
   renderSuggestions() {
-    this.suggestionsEl.innerHTML = '';
+    this.suggestionsEl.innerHTML = "";
     if (this.suggestions.length > 0) {
-      const hint = document.createElement('p');
-      hint.className = 'suggestions__hint';
-      hint.innerHTML = 'Выберите вариант или продолжите ввод';
+      const hint = document.createElement("p");
+      hint.className = "suggestions__hint";
+      hint.innerHTML = "Выберите вариант или продолжите ввод";
       this.suggestionsEl.appendChild(hint);
 
-      this.suggestions.forEach(item => {
-        const li = document.createElement('li');
+      this.suggestions.forEach((item) => {
+        const li = document.createElement("li");
         li.className = "suggestions__item";
-        const title = document.createElement('p');
-        title.className = 'title';
+        const title = document.createElement("p");
+        title.className = "title";
         title.innerHTML = item.value;
-        const info = document.createElement('p');
-        info.className = 'info';
-        info.innerHTML = item.data.inn + ' ' + item.data.address.value;
+        const info = document.createElement("p");
+        info.className = "info";
+        info.innerHTML = item.data.inn + " " + item.data.address.value;
         
         li.appendChild(title);
         li.appendChild(info);
 
-        li.addEventListener('click', () => this.handleSelect(item.data));
+        li.addEventListener("click", () => this.handleSelect(item.data));
         this.suggestionsEl.appendChild(li);
-        this.suggestionsEl.addEventListener('mouseover', () => this.isOverList = true);
-        this.suggestionsEl.addEventListener('mouseleave', () => this.isOverList = false)
+        this.suggestionsEl.addEventListener("mouseover", () => this.isOverList = true);
+        this.suggestionsEl.addEventListener("mouseleave", () => this.isOverList = false)
       });
     }
   }
 
   toggleOpen () {
-    this.suggestionsEl.style.display = this.getAttribute('open') ==='true' ? "block" : 'none';
+    this.suggestionsEl.style.display = this.getAttribute("open") ==="true" ? "block" : "none";
   }
 
   handleSelect(data) {
     if (!data) return;
 
-    this.typeEl.innerHTML = TYPES[data.type] + " (" + data.type + ")"
+    this.typeEl.innerHTML = TYPES[data.type] + " (" + data.type + ")";
 
     this.searchEl.value = data.name.short_with_opf;
     if (data.name) {
@@ -166,39 +164,31 @@ class HintWidget extends HTMLElement {
       this.nameFullEl.value = data.name.full_with_opf || "";
     }
   
-    this.innEl.value = join([data.inn, data.kpp], " / ");
+    this.innEl.value = [data.inn, data.kpp].join(" / ");
 
     if (data.address) {
       var address = "";
       if (data.address.data.qc == "0") {
-        address = join([data.address.data.postal_code, data.address.value]);
+        address = [data.address.data.postal_code, data.address.value].join(", ");
       } else {
         address = data.address.data.source;
       }
       this.addressEl.value = address;
     }
-    this.setAttribute('query', '');
-    this.setAttribute('open', false);
+    this.setAttribute("query", "");
+    this.setAttribute("open", false);
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback(name) {
     switch(name) {
-      case 'open':
+      case "open":
         this.toggleOpen();
         break;
-      case 'query':
+      case "query":
         this.renderSuggestions();
         break;
     }
   }
-
 }
 
-// Now that our class is defined, we can register it
-customElements.define('hint-widget', HintWidget);
-
-
-function join(arr /*, separator */) {
-  var separator = arguments.length > 1 ? arguments[1] : ", ";
-  return arr.filter(function(n){return n}).join(separator);
-}
+customElements.define("hint-widget", HintWidget);

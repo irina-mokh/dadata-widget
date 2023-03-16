@@ -22,9 +22,12 @@ input {
   position: relative;
   width: 100%;
 }
-.result {
-  width: 50%;
-  min-width: 300px;
+
+@media (min-width: 600px) {
+  .result {
+    width: 50%;
+    min-width: 300px;
+  }
 }
 
 .row {
